@@ -64,7 +64,7 @@ const Post = ({ post }) => {
             <CardMedia className={classes.media} image={`https://localhost:7010/PostFiles/${post.postImage}`} title={post.title} />
             <div className={classes.overlay}>
                 <Typography color="silver" fontStyle="italic" variant="h7">{post.title}</Typography>
-                <Typography fontWeight='bold' fontStyle="oblique" color="blanchedalmond" variant="body2">{moment(post.created_At).format("hh:mm")}</Typography>
+                <Typography fontWeight='bold' fontStyle="oblique" color="blanchedalmond" variant="body2">{moment(post.created_At).format("dd-MM-yyyy hh:mm")}</Typography>
             </div>
 
             <div className={classes.overlay2}>

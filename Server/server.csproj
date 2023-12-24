@@ -17,5 +17,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11"/>
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.1.0-preview"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.0-preview"/>
+    <PackageReference Include="Dapper" Version="2.1.4"/>
+    <PackageReference Include="AutoMapper" Version="12.0.1"/>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="7.0.11"/>
   </ItemGroup>
 </Project>

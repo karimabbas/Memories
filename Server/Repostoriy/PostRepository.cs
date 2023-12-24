@@ -2,8 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.VisualBasic;
 using Server.Data;
 using Server.Dto;
 using Server.Models;
@@ -14,12 +19,14 @@ namespace Server.Repostoriy
     public class PostRepository : IPostService
     {
         private readonly DataContext _dataContext;
+        private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PostRepository(DataContext dataContext, IWebHostEnvironment webHostEnvironment)
+        public PostRepository(DataContext dataContext, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _dataContext = dataContext;
             _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
         }
         public bool CreatePost(Post post)
         {
@@ -44,7 +51,13 @@ namespace Server.Repostoriy
 
         public List<Post> GetPosts()
         {
-            return _dataContext.Posts.ToList();
+            //usign Dapper
+
+            // using (var conn = new SqlConnection(_configuration.GetConnectionString("myConn")))
+            // {
+            //     var posts = conn.Query<Post>("SELECT * FROM posts").ToList();
+            // }
+            return _dataContext.Posts.AsNoTracking().ToList();
         }
 
         public Post EditPost(int id)
@@ -86,11 +99,15 @@ namespace Server.Repostoriy
             }
         }
 
-
-
         private Post NotFound()
         {
             throw new NotImplementedException();
+        }
+
+        public List<Post> GetUserPosts(string id)
+        {
+            var user = _dataContext.Users.Find(id);
+            return _dataContext.Posts.Where(x => x.AppUser.Id == user.Id).AsNoTracking().ToList();
         }
     }
 }

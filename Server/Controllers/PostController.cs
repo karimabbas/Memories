@@ -11,6 +11,10 @@ using Server.Dto;
 using Server.Models;
 using Server.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Server.Controllers
 {
@@ -22,13 +26,13 @@ namespace Server.Controllers
         private readonly DataContext _dataContext;
         private readonly IPostService _postService;
         private readonly IWebHostEnvironment _webHostEnvironmen;
-
         public PostController(DataContext dataContext, IPostService postService, IWebHostEnvironment webHostEnvironment)
         {
             _dataContext = dataContext;
             _postService = postService;
             _webHostEnvironmen = webHostEnvironment;
         }
+
         [HttpPost("CreatePost")]
         public IActionResult CreatePost([FromForm] PostDto postDto)
         {
@@ -48,8 +52,12 @@ namespace Server.Controllers
                 using var filestream = new FileStream(filePath, FileMode.Create);
                 postDto.formFile.CopyTo(filestream);
 
+                var UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = _dataContext.Users.Where(x => x.Id == UserId).SingleOrDefault();
+
                 var post = new Post
                 {
+                    AppUser = user,
                     Title = postDto.Title,
                     Message = postDto.Message,
                     PostImage = postDto.formFile?.FileName.ToString()
@@ -68,8 +76,11 @@ namespace Server.Controllers
 
         [HttpGet("GetAllPosts")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Post>))]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetPosts()
         {
+            // var UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var posts = _postService.GetPosts();
             if (posts != null)
             {
@@ -134,36 +145,7 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPut("postreacts/{id}/{type}")]
-        public ActionResult<Post> Updatedposts(int id, string type)
-        {
-            var post = _dataContext.Posts.Find(id);
-            if (type == "loves")
-            {
-                post.Loves += 1;
-            }
-            else if (type == "likes")
-            {
-                post.Likes += 1;
-            }
-            else
-            {
-                return Ok(new { message = "Server Error" });
 
-            }
-            try
-            {
-                _dataContext.Update(post);
-                _dataContext.SaveChanges();
-                return Ok(new { message = post });
-
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-
-        }
 
     }
 }

@@ -160,7 +160,7 @@ const Auth = () => {
                             <CustomInput label="ConfirmPassword:" name="ConfirmPassword" type="password" />
                             <br></br>
 
-                            <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                            <Button type="submit" variant="contained" color="primary" className={classes.submit}>
                                 {signUp ? 'Sign Up' : 'Sign In'}
                             </Button>
                             {/* <Button type="submit" fullWidth variant="contained" onClick={resetForm} color="primary" className={classes.submit}> clear</Button> */}

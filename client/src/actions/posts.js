@@ -37,6 +37,7 @@ export const createPost = (post) => async (dispatch) => {
     console.log('done')
   } catch (error) {
     const data = error.response.data.errors
+    console.log(error.response)
     dispatch({
       type: "Not_CREATE",
       payload: data

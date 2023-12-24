@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +17,7 @@ namespace Server.Helpers
         {
             _config = configuration;
         }
-        public string GenerateToken()
+        public string GenerateToken(List<Claim> claims)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
 
@@ -25,7 +26,8 @@ namespace Server.Helpers
             var Token = new JwtSecurityToken(
                 _config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
-                expires: DateTime.Now.AddMinutes(15),
+                claims:claims,
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(Token);
         }

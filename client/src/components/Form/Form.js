@@ -29,6 +29,7 @@ const Form = () => {
     }
 
     const errors = useSelector((state) => state.ErrorStore)
+    // console.log(errors)
     const allpost = useSelector((state) => state.postsStore)
 
     const post = useSelector(() => (PostID ? allpost.find((p) => p.id === PostID) : null));

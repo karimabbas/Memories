@@ -10,6 +10,8 @@ namespace Server.Models
 {
     public class AppUser : IdentityUser
     {
+        public ICollection<Post>? Post { get; set; }
+        public ICollection<Reacts>? Reacts {get;set;}
 
     }
 }

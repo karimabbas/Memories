@@ -1,3 +1,4 @@
+import { red } from '@mui/material/colors';
 import { makeStyles } from '@mui/styles';
 
 export default makeStyles(() => ({
@@ -38,5 +39,9 @@ export default makeStyles(() => ({
   },
   lock :{
     backgroundColor:"red"
-  }
+  },
+  empButton: {
+    marginTop:20,
+    marginLeft:50,
+}
 }));

@@ -14,7 +14,7 @@ export default makeStyles((theme) => ({
     textDecoration: 'none',
 
     color: 'rebeccapurple',
-    fontFamily:"fantasy"
+    fontFamily: "fantasy"
   },
   image: {
     marginLeft: '15px',
@@ -40,8 +40,8 @@ export default makeStyles((theme) => ({
     // color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
   },
-  signin:{
-    color:"red"
+  signin: {
+    color: "red"
   }
 
 }));

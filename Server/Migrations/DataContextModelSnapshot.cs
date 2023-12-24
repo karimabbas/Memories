@@ -155,6 +155,22 @@ namespace server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Server.Models.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Activity_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Activity");
+                });
+
             modelBuilder.Entity("Server.Models.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -220,6 +236,86 @@ namespace server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Server.Models.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Dept_name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("YearOfCreation")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("Server.Models.EmpActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActivityID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmpID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityID");
+
+                    b.HasIndex("EmpID");
+
+                    b.ToTable("EmpActivities");
+                });
+
+            modelBuilder.Entity("Server.Models.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Employee_Name");
+
+                    b.Property<double?>("Salary")
+                        .IsRequired()
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Employees");
+                });
+
             modelBuilder.Entity("Server.Models.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -227,6 +323,9 @@ namespace server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Created_At")
                         .HasColumnType("datetime2");
@@ -248,12 +347,12 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("User_Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("User_Id");
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Posts");
                 });
@@ -266,23 +365,40 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Loves")
-                        .HasColumnType("int");
-
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Post_id")
+                    b.Property<int?>("ReactsId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
+                    b.HasIndex("ReactsId");
+
                     b.ToTable("PostReacts");
+                });
+
+            modelBuilder.Entity("Server.Models.Reacts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ReactTypeReact")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Reacts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -336,11 +452,40 @@ namespace server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Server.Models.EmpActivity", b =>
+                {
+                    b.HasOne("Server.Models.Activity", "Activity")
+                        .WithMany("EmpActivities")
+                        .HasForeignKey("ActivityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Employee", "Employee")
+                        .WithMany("EmpActivities")
+                        .HasForeignKey("EmpID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Server.Models.Employee", b =>
+                {
+                    b.HasOne("Server.Models.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Department");
+                });
+
             modelBuilder.Entity("Server.Models.Post", b =>
                 {
                     b.HasOne("Server.Models.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("User_Id");
+                        .WithMany("Post")
+                        .HasForeignKey("AppUserId");
 
                     b.Navigation("AppUser");
                 });
@@ -348,10 +493,57 @@ namespace server.Migrations
             modelBuilder.Entity("Server.Models.PostReacts", b =>
                 {
                     b.HasOne("Server.Models.Post", "Post")
-                        .WithMany()
+                        .WithMany("PostReacts")
                         .HasForeignKey("PostId");
 
+                    b.HasOne("Server.Models.Reacts", "Reacts")
+                        .WithMany("PostReacts")
+                        .HasForeignKey("ReactsId");
+
                     b.Navigation("Post");
+
+                    b.Navigation("Reacts");
+                });
+
+            modelBuilder.Entity("Server.Models.Reacts", b =>
+                {
+                    b.HasOne("Server.Models.AppUser", "AppUser")
+                        .WithMany("Reacts")
+                        .HasForeignKey("AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Server.Models.Activity", b =>
+                {
+                    b.Navigation("EmpActivities");
+                });
+
+            modelBuilder.Entity("Server.Models.AppUser", b =>
+                {
+                    b.Navigation("Post");
+
+                    b.Navigation("Reacts");
+                });
+
+            modelBuilder.Entity("Server.Models.Department", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("Server.Models.Employee", b =>
+                {
+                    b.Navigation("EmpActivities");
+                });
+
+            modelBuilder.Entity("Server.Models.Post", b =>
+                {
+                    b.Navigation("PostReacts");
+                });
+
+            modelBuilder.Entity("Server.Models.Reacts", b =>
+                {
+                    b.Navigation("PostReacts");
                 });
 #pragma warning restore 612, 618
         }

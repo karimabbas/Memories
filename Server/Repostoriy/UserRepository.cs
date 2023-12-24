@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
@@ -17,6 +18,13 @@ namespace Server.Repostoriy
         {
             _dataContext = dataContext;
         }
+
+        public AppUser Cuttent_user(string id)
+        {
+            var user = _dataContext.Users.Where(x => x.Id == id).SingleOrDefault();
+            return user;
+        }
+
         public List<AppUser> GetAllUsers()
         {
             return _dataContext.Users.ToList();

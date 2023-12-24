@@ -10,7 +10,6 @@ const Posts = () => {
     const classes = useStyles();
     const navigate = useNavigate();
 
-
     const user = JSON.parse(localStorage.getItem("UserProfile"));
 
     const posts = useSelector((state) => state.postsStore)

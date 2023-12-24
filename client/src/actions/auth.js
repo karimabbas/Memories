@@ -35,7 +35,8 @@ export const signin = (formData) => async (dispatch) => {
         const response = await api.signIn(formData);
         const data = response.data.message
         const token = response.data.token
-        console.log(data)
+        const UserId = response.data.UserId
+        console.log(response.data)
         dispatch({
             type: "AUTH",
             data,
@@ -57,12 +58,36 @@ export const signin = (formData) => async (dispatch) => {
 
 export const getUsers = () => {
     return async dispatch => {
-      const response = await api.users();
-      const data = response.data.message;
-      console.log(data)
-      dispatch({
-        type: "FETCH_ALL_Users",
-        data
-      });
+        const response = await api.users();
+        const data = response.data.message;
+        console.log(data)
+        dispatch({
+            type: "FETCH_ALL_Users",
+            data
+        });
     }
-  }
+}
+
+export const UserProfile = () => {
+    return async dispatch => {
+        const response = await api.CurrentUser();
+        const data = response.data;
+        // console.log(data)
+        dispatch({
+            type: "Current_User",
+            data
+        });
+    }
+}
+
+export const LOGOUT = () => {
+    return async dispatch => {
+        const response = await api.logOut();
+        const data = response.data.message;
+        console.log(data);
+        dispatch({
+            type: "LOGOUT",
+            data
+        });
+    }
+}

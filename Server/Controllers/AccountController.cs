@@ -14,6 +14,8 @@ using Server.Models;
 using Server.Services;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
+using System.Globalization;
 
 namespace Server.Controllers
 {
@@ -69,12 +71,20 @@ namespace Server.Controllers
                 var result = await _signInManager.PasswordSignInAsync(user, userDto.Password, false, false);
                 if (result.Succeeded)
                 {
-                    var GenerateToken = _jwtService.GenerateToken();
 
-                    Response.Cookies.Append("GenerateToken", GenerateToken, new CookieOptions
+                    List<Claim> claims = new(){
+                        new Claim(ClaimTypes.NameIdentifier,user.Id),
+                        new Claim(ClaimTypes.Name,user.UserName),
+                        new Claim("myClalim",user.Email)
+                    };
+
+                    var GenerateToken = _jwtService.GenerateToken(claims);
+
+                    Response.Cookies.Append("myToken", GenerateToken, new CookieOptions
                     {
                         HttpOnly = true
                     });
+
                     return Ok(new { message = user, Token = GenerateToken });
                 }
                 return BadRequest(new { message = "Error, Not Correct" });
@@ -89,7 +99,10 @@ namespace Server.Controllers
         {
             try
             {
-                Response.Cookies.Delete("GenerateToken");
+
+                Response.Cookies.Delete("myToken");
+                var claims = User.Claims;
+
                 await _signInManager.SignOutAsync();
                 return Ok(new { message = "User Loged out" });
 
@@ -107,14 +120,13 @@ namespace Server.Controllers
         [ProducesResponseType(200)]
         public ActionResult<List<AppUser>> GetAllUsers()
         {
+            // string token = Request.Headers["Authorization"];
+            // if (token.StartsWith("Bearer"))
+            // {
+            //     token = token.Substring("Bearer".Length).Trim();
+            // }
 
-            string token = Request.Headers["Authorization"];
-            if (token.StartsWith("Bearer"))
-            {
-                token = token.Substring("Bearer".Length).Trim();
-            }
-
-            var handler = new JwtSecurityTokenHandler();
+            // var handler = new JwtSecurityTokenHandler();
 
             try
             {
@@ -135,5 +147,28 @@ namespace Server.Controllers
         }
 
 
+        [HttpGet("CurrentUser")]
+        public ActionResult<AppUser> CurrentUser()
+        {
+            var UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (UserId == null)
+            {
+                return Ok("user id dose not exist");
+            }
+            else
+            {
+                try
+                {
+                    var x = User.Claims.Select(c => new { c.Type, c.Value });
+                    var user = _userService.Cuttent_user(UserId);
+                    return Ok(x);
+                }
+                catch (System.Exception ex)
+                {
+                    return Ok(new { message = ex.Message });
+                }
+            }
+
+        }
     }
 }

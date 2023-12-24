@@ -10,6 +10,7 @@ namespace Server.Services
     public interface IPostService
     {
         List<Post> GetPosts();
+        List<Post> GetUserPosts(string Id);
         bool CreatePost(Post post);
         Post EditPost(int id);
         Post UpadatePost(int id,PostDto postDto);
