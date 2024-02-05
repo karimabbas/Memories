@@ -6,6 +6,7 @@ import images from "../../images/lol.png";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LOGOUT } from "../../actions/auth";
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
 
@@ -27,6 +28,13 @@ const Navbar = () => {
         SetUser(null);
     }
 
+
+    const { i18n } = useTranslation();
+
+    function changeLanguage(e) {
+        i18n.changeLanguage(e.target.value);
+    }
+
     return (
         <AppBar className={classes.appBar} position="static" color="inherit" >
             <div className={classes.brandContainer}>
@@ -39,6 +47,9 @@ const Navbar = () => {
             {user ?
                 <Button variant="contained" className={classes.logout} onClick={Logout} color="error">Logout</Button>
                 : <Button component={Link} to="/auth" variant="contained" color="warning">Sign In</Button>}
+
+            <button onClick={changeLanguage} value='en'>English</button>
+            <button onClick={changeLanguage} value='ar'>عربى</button>
 
         </AppBar>
     )

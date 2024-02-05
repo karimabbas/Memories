@@ -4,12 +4,10 @@ import { Card, Button, CardActions, CardContent, CardMedia, Typography } from '@
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import { deletePost, EditPost, PostReactions } from '../../../actions/posts';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import EditIcon from '@mui/icons-material/Edit';
-import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbUpAltOutlined from '@mui/icons-material/ThumbUpAltOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 

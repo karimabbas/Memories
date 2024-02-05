@@ -21,5 +21,7 @@
     <PackageReference Include="AutoMapper" Version="12.0.1"/>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="7.0.11"/>
+    <PackageReference Include="JwtSecurityTokenCustom" Version="1.0.0.2"/>
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.2"/>
   </ItemGroup>
 </Project>

@@ -9,7 +9,6 @@ namespace Server.Services
     public interface IUserService
     {
         List<AppUser> GetAllUsers();
-
         AppUser Cuttent_user(string id);
     }
 }

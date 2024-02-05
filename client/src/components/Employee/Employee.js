@@ -1,25 +1,23 @@
-import { Card, CircularProgress, FormControl, Grid, InputLabel, LinearProgress, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { CircularProgress, Grid, InputLabel, MenuItem, Paper, Select} from '@mui/material';
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import * as yup from 'yup';
 import CustomInput from '../Auth/CustomInput';
-import styles from "../Auth/styles"
-import stylesColor from "../Navbar/styles";
+import styles from "../Auth/styles";
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDepts } from '../../actions/Dept';
-import { CreateEmp } from '../../api';
-import { CreateEmployee, getAllEmps } from '../../actions/Emp';
-import { CardTitle } from 'reactstrap';
+import { CreateEmployee, UpdateEmployee, getAllEmps } from '../../actions/Emp';
 import SingleEmp from './SingleEmp';
+import { useTranslation } from 'react-i18next';
 
 
 const Employee = () => {
 
     const classes = styles();
-    const classcolor = stylesColor();
     const dispatch = useDispatch();
-    const [allDepts, setAllDepts] = useState();
+    const { t } = useTranslation();
+
 
     const [inputfileds, SetInputFileds] = useState({
         Name: '',
@@ -28,8 +26,9 @@ const Employee = () => {
         Email: ''
     });
 
-    const [department, setDepartment] = useState({
-    });
+    const [department, setDepartment] = useState('');
+
+    const EditEmp = JSON.parse(localStorage.getItem("editEmp"));
 
     useEffect(() => {
         dispatch(getAllDepts())
@@ -37,25 +36,41 @@ const Employee = () => {
     }, [dispatch]);
 
     const all_Depts = useSelector((state) => state.DeptStore);
-    const all_Emps = useSelector((state) => state.EmpStore);
-    console.log(all_Emps)
+    const employeesStore = useSelector((state) => state.EmpStore);
 
     const InputSchema = yup.object({
         Name: yup.string().required("Please Enter your name"),
         Salary: yup.number().required("Please Enter your salary"),
         Email: yup.string().required("Please Enter your email").email("Pleas Enter valid Email"),
         Age: yup.number().required("Please Enter your Age"),
-        Department: yup.string()
+        department: yup.string()
     })
 
     const handleDept = (e) => {
-        setDepartment({ ...department, [e.target.name]: e.target.value })
+        setDepartment({ [e.target.name]: e.target.value })
     }
+
+    // useEffect(() => {
+    //     if (EditEmp != null) {
+    //         SetInputFileds({ Name: EditEmp.name, Salary: EditEmp.salary, Age: EditEmp.age, Email: EditEmp.email });
+    //         var id = EditEmp.department.id;
+    //         console.log(id)
+    //         setDepartment(id)
+    //     }
+    //     localStorage.removeItem("editEmp");
+    // }, [EditEmp]);
+
 
     const handleSubmit = (values) => {
 
-        dispatch(CreateEmployee({ ...department, ...values }))
-        
+        if (EditEmp) {
+            console.log(values);
+            console.log(department);
+            dispatch(UpdateEmployee(EditEmp.id,{...department,...values}))
+            localStorage.removeItem("editEmp");
+        }else{
+            dispatch(CreateEmployee({ ...department, ...values }))
+        }
     }
 
     return (
@@ -63,54 +78,68 @@ const Employee = () => {
             <Formik
                 initialValues={inputfileds}
                 validationSchema={InputSchema}
-                onSubmit={(values) => {
+                onReset={() => { }}
+                onSubmit={(values, { resetForm }) => {
                     handleSubmit(values)
-                }}
-                onReset={()=> {
-                
+                    resetForm();
                 }}
             >
-                {
-                    () => (
+
+                {({ handleChange, values }) => {
+
+                    // console.log("props", props);
+                    // const { values } = props
+                    if (EditEmp != null) {
+                        values.Name = EditEmp.name
+                    }
+
+                    // const handelEmp = (e) => {
+                    //     SetInputFileds([e.target.name], e.target.value)
+                    // }
+
+                    return (
                         <>
-                            {
-                                <Paper>
-                                    <Form>
-                                        <CustomInput label="Name : " name="Name" type="text" />
-                                        <pre></pre>
+                            <Paper>
+                                <Form>
+                                    <CustomInput label={t("Name")} onChange={handleChange} value={values.Name} name="Name" type="text" />
+                                    <pre></pre>
 
-                                        <CustomInput label="Salary : " name="Salary" type="text" />
-                                        <pre></pre>
+                                    <CustomInput label={t("Salary")} name="Salary" type="text" />
+                                    <pre></pre>
 
-                                        <CustomInput label="Email : " name="Email" type="text" />
-                                        <pre></pre>
+                                    <CustomInput label="Email :" name="Email" type="text" />
+                                    <pre></pre>
 
-                                        <CustomInput label="Age : " name="Age" type="text" />
-                                        <pre></pre>
+                                    <CustomInput label="Age :" name="Age" type="text" />
+                                    <pre></pre>
 
-                                        <InputLabel id="demo-simple-select-label">Department :</InputLabel>
-                                        <Select margin='none' sx={{ minWidth: 240 }} labelId='demo-simple-select-label'
-                                            id="demo-simple-select"
-                                            name='Department'
-                                            onChange={handleDept}
-                                        >
-                                            {all_Depts.map((x) => (
-                                                <MenuItem value={x.id} >{x.dept_name}</MenuItem>
-                                            ))}
+                                    <InputLabel id="demo-simple-select-label" key={44}>Department :</InputLabel>
+                                    <Select margin='none' sx={{ minWidth: 240 }} labelId="demo-simple-select-label" id="demo-simple-select"
+                                        name="department"
+                                        value={department}
+                                        onChange={handleDept}
+                                    >
+                                        {all_Depts.map((x) => (
+                                            <MenuItem value={x.id} >{x.dept_name}</MenuItem>
+                                        ))}
 
-                                        </Select>
-                                        <pre></pre>
-                                        <Button className={classes.empButton} type="submit" variant="contained" color="success" >
-                                            Save
+                                    </Select>
+                                    <pre></pre>
+                                    {
+                                        inputfileds.Name ? <Button className={classes.empButton} type="submit" variant="contained" color="warning" >
+                                            Update
                                         </Button>
-                                    </Form>
-                                </Paper>
-                            }
-
-
+                                            :
+                                            <Button className={classes.empButton} type="submit" variant="contained" color="success" >
+                                                Save
+                                            </Button>
+                                    }
+                                </Form>
+                            </Paper>
                         </>
-
                     )
+
+                }
                 }
 
             </Formik >
@@ -118,10 +147,10 @@ const Employee = () => {
             <pre></pre>
             <Paper>
                 {
-                    all_Emps ?
+                    employeesStore ?
                         <Grid className={classes.mainContainer} container alignItems="stretch" spacing={4}>
 
-                            {all_Emps.map((e) => (
+                            {employeesStore.map((e) => (
                                 <Grid key={e.id} item xs={12} sm={6} md={6}>
                                     <SingleEmp emp={e} />
                                 </Grid>

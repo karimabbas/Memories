@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Server.Data;
 using Server.Models;
 using Server.Services;
@@ -12,9 +14,11 @@ namespace Server.Repostoriy
     public class DepartmentRepository : IDepartmentService
     {
         private readonly DataContext _dataContext;
-        public DepartmentRepository(DataContext dataContext)
+        private readonly IDistributedCache _distributedCache;
+        public DepartmentRepository(DataContext dataContext, IDistributedCache distributedCache)
         {
             _dataContext = dataContext;
+            _distributedCache = distributedCache;
 
         }
         public bool CreateDepartment(Department department)
@@ -22,9 +26,21 @@ namespace Server.Repostoriy
             _dataContext.Add(department);
             return Save();
         }
-        public List<Department> Get_All_Dept()
+        public async Task<List<Department>> Get_All_Dept()
         {
-            return _dataContext.Departments.ToList();
+            var cachedData = await _distributedCache.GetStringAsync("allDepts");
+            if (cachedData is not null)
+            {
+                return JsonConvert.DeserializeObject<List<Department>>(cachedData);
+            }
+
+            var expirationTime = TimeSpan.FromMinutes(5.0);
+            var allDepartments = await _dataContext.Departments.ToListAsync();
+            cachedData = JsonConvert.SerializeObject(allDepartments);
+            var cacheOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(expirationTime);
+            await _distributedCache.SetStringAsync("allDepts", cachedData, cacheOptions);
+            
+            return allDepartments;
         }
 
         public bool Save()

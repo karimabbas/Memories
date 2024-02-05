@@ -15,6 +15,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Client;
 
 namespace Server.Controllers
 {
@@ -145,7 +146,27 @@ namespace Server.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetUserPost")]
+        public IActionResult GetUserPost([FromQuery]string id)
+        {
+            try
+            {
+                if (id != null)
+                {
+                    var post = _postService.GetUserPosts(id);
+                    if (post != null)
+                        return Ok(post);
+                    return NoContent();
+                }
+                return BadRequest();
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
 
+            }
 
+        }
     }
 }

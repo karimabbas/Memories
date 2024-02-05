@@ -12,6 +12,7 @@ import Depertment from "./components/Dept/Depertment";
 import ACtivity from "./components/Activity/Activity";
 import Employee from "./components/Employee/Employee";
 import CurrentUser from "./components/Users/CurrentUser";
+import UploadFiles from "./components/UploadFiles/UploadFiles";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("UserProfile"));
@@ -37,6 +38,9 @@ function App() {
           <Route path="/activities" exact element={<ACtivity />} />
 
           <Route path="/userProfile" exact element={<CurrentUser />} />
+
+          <Route path="/files" exact element={<UploadFiles />} />
+
 
         </Routes>
       </Container>

@@ -27,7 +27,7 @@ export const getAllDepts = () => {
     return async dispatch => {
         const response = await api.AllDepts();
         const data = response.data;
-        console.log(data)
+        // console.log(data)
         dispatch({
             type: "FETCH_ALL_DEPT",
             data

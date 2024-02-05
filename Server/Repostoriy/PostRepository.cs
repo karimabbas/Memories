@@ -106,8 +106,11 @@ namespace Server.Repostoriy
 
         public List<Post> GetUserPosts(string id)
         {
-            var user = _dataContext.Users.Find(id);
-            return _dataContext.Posts.Where(x => x.AppUser.Id == user.Id).AsNoTracking().ToList();
+            var userId = _dataContext.Users?.Find(id)?.Id;
+            // return _dataContext.Posts.Where(x => x.AppUser.Id == userId).Include(x=>x.AppUser).AsNoTracking().ToList();
+
+            return _dataContext.Posts.FromSqlRaw($"spUserPost {userId}").ToList();
+
         }
     }
 }

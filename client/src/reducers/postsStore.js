@@ -5,7 +5,7 @@ const postsStore = (posts = [], action) => {
         case 'CREATE':
             // console.log(posts)
             return [...posts, action.data];
-        case 'Edit':
+        case 'Edit_Post':
             localStorage.setItem('PostId', JSON.stringify(action.editPost.id))
             return posts.map((post) => (post.id === action.editPost.id) ? action.editPost : post);
         case 'UPDATE':

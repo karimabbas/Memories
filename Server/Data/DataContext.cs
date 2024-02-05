@@ -40,7 +40,7 @@ namespace Server.Data
                 emp.Property(e => e.Name)
                 .IsRequired()
                 .HasColumnName("Employee_Name")
-                .IsUnicode(false)
+                .IsUnicode(true)
                 .HasMaxLength(50);
 
                 emp.Property(e => e.Salary)
@@ -52,7 +52,7 @@ namespace Server.Data
 
             builder.Entity<Department>(dept =>
             {
-                dept.HasKey(d => d.Id);
+                // dept.HasKey(d => d.Id);
                 dept.Property(d => d.Dept_name)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -85,6 +85,7 @@ namespace Server.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Activity> Activity { get; set; }
         public DbSet<EmpActivity> EmpActivities { get; set; }
-
+        public DbSet<RefreshToken> RefreshTokens {get;set;}
+        public DbSet<Driver> Drivers {get;set;}
     }
 }

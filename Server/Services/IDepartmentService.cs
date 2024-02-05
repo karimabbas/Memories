@@ -8,7 +8,7 @@ namespace Server.Services
 {
     public interface IDepartmentService
     {
-        List<Department> Get_All_Dept();
+        Task<List<Department>> Get_All_Dept();
         bool CreateDepartment(Department department);
 
     }

@@ -57,7 +57,7 @@ export const EditPost = (id) => {
     const editPost = response.data;
     // console.log(editPost);
     dispatch({
-      type: "Edit",
+      type: "Edit_Post",
       editPost
     })
   }

@@ -4,7 +4,6 @@ import stylesColor from "../Navbar/styles";
 import { Button, Paper, TextField, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost, UpdatePost } from '../../actions/posts';
-import { all } from 'axios';
 
 const Form = () => {
 

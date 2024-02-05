@@ -9,7 +9,6 @@ namespace Server.Dto
 {
     public class DepartmentDto
     {
-        public int Id { get; set; }
         public string? Dept_name { get; set; }
         public DateTime YearOfCreation { get; set; }
     }

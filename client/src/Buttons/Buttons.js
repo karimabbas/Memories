@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'reactstrap';
+import Button from '@mui/material/Button';
 
 
 const Buttons = () => {
@@ -27,21 +27,18 @@ const Buttons = () => {
         navigate("/userProfile")
     }
 
+    const FilesUpload = ()=>{
+        navigate("/files")
+    }
     return (
         <div>
-            <Button onClick={Depertment} color="warning">Depertments</Button>
-            <span>  </span>
-            <Button onClick={Users} color="error">Users</Button>
-            <span>  </span>
-
-            <Button onClick={Employees} color="error">Employees</Button>
-            <span>  </span>
-
-            <Button onClick={ACtivities} color="error">Activities</Button>
-            <span>  </span>
-
-            <Button onClick={UserProfile} color="error">UserProfile</Button>
-            <span>  </span>
+            <Button onClick={Depertment} variant="contained" color="warning">Depertments</Button>
+            <Button onClick={Users} color="error" variant="contained">Users</Button>
+            <Button onClick={Employees} color="success" variant="contained">Employees</Button>
+            <Button onClick={ACtivities} color="inherit" variant="contained">Activities</Button>
+            <Button onClick={UserProfile} color="info" variant="contained">UserProfile</Button>
+            <Button onClick={FilesUpload} color="secondary" variant="contained">Files</Button>
+            
 
         </div>
 

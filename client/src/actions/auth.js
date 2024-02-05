@@ -34,13 +34,16 @@ export const signin = (formData) => async (dispatch) => {
     try {
         const response = await api.signIn(formData);
         const data = response.data.message
-        const token = response.data.token
+        const token = response.data.accessToken
+        const refreshToken = response.data.refreshToken
+        const expirtDate = response.data.expirtDate
         const UserId = response.data.UserId
-        console.log(response.data)
+        console.log(response)
         dispatch({
             type: "AUTH",
             data,
-            token
+            token,
+            refreshToken
         });
     } catch (error) {
         for (let index = 0; index < 6; index++) {

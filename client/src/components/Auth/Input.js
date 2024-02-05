@@ -9,6 +9,7 @@ const Input = ({ name, handleChange, label, half, autoFocus, type,handleShowPass
         <Grid item xs={12} sm={half ? 6 : 12}>
             <TextField
                 name={name}
+                value={''}
                 onChange={handleChange}
                 variant="outlined"
                 required

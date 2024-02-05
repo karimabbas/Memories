@@ -16,6 +16,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 using System.Globalization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Server.Controllers
 {
@@ -23,18 +24,26 @@ namespace Server.Controllers
     // [Route("api/[c")]
     public class AccountController : ControllerBase
     {
+
+        public delegate void UserLogenInEventHandler();
+        public event UserLogenInEventHandler UserLogenInEventHandler1;
         private readonly DataContext _dataContext;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IUserService _userService;
         private readonly JwtService _jwtService;
-        public AccountController(JwtService jwtService, DataContext dataContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IUserService userService)
+        private readonly TokenValidationParameters _tokenValidationParameters;
+        private readonly LogFile _logFile;
+
+        public AccountController(JwtService jwtService, LogFile logFile, DataContext dataContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TokenValidationParameters tokenValidationParameters, IUserService userService)
         {
             _dataContext = dataContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _userService = userService;
             _jwtService = jwtService;
+            _logFile = logFile;
+            _tokenValidationParameters = tokenValidationParameters;
         }
 
         [HttpPost("Account/SginUp")]
@@ -72,24 +81,62 @@ namespace Server.Controllers
                 if (result.Succeeded)
                 {
 
-                    List<Claim> claims = new(){
-                        new Claim(ClaimTypes.NameIdentifier,user.Id),
-                        new Claim(ClaimTypes.Name,user.UserName),
-                        new Claim("myClalim",user.Email)
-                    };
+                    ///Deleget
+                    // UserInfoDeleget userInfo;
+                    // userInfo = new UserInfoDeleget(_logFile.GetNotification);
+                    // userInfo?.Invoke();
 
-                    var GenerateToken = _jwtService.GenerateToken(claims);
+                    //Event
+                    UserLogenInEventHandler1 += _logFile.GetNotificationWithEventHandler;
 
-                    Response.Cookies.Append("myToken", GenerateToken, new CookieOptions
+                    // UserLogenInEventHandler1; 
+                    // List<Claim> claims = new(){
+                    //     new Claim(ClaimTypes.NameIdentifier,user.Id),
+                    //     new Claim(ClaimTypes.Name,user.UserName),
+                    //     new Claim("myClalim",user.Email)
+                    // };
+
+                    var GenerateToken = _jwtService.GenerateToken(user);
+
+                    // Response.Cookies.Append("myToken", GenerateToken, new CookieOptions
+                    // {
+                    //     HttpOnly = true
+                    // });
+
+                    return Ok(new
                     {
-                        HttpOnly = true
+                        message = user,
+                        AccessToken = GenerateToken.Token,
+                        refreshToken = GenerateToken.RefreshToken?.Token,
+                        ExpirtDate = GenerateToken.TokenExpiry
                     });
-
-                    return Ok(new { message = user, Token = GenerateToken });
                 }
                 return BadRequest(new { message = "Error, Not Correct" });
             }
             return BadRequest(new { message = "Error Wrong Password" });
+        }
+
+        [HttpPost]
+        [Route("Account/RefreshToken")]
+        public IActionResult RefreshToken([FromBody] TokenRequest tokenRequest)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _jwtService.VerifyTokenAndGenerate(tokenRequest);
+
+                if (result == null)
+                {
+                    return BadRequest(new ErrorMessage
+                    {
+                        Message = "invalid tokens"
+                    });
+                }
+                return Ok(result);
+            }
+            return BadRequest(new ErrorMessage
+            {
+                Message = "invalid Paylod"
+            });
         }
 
 
@@ -115,7 +162,7 @@ namespace Server.Controllers
         }
 
         // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [Authorize]
+        // [Authorize]
         [HttpGet("AllUsers")]
         [ProducesResponseType(200)]
         public ActionResult<List<AppUser>> GetAllUsers()
@@ -170,5 +217,6 @@ namespace Server.Controllers
             }
 
         }
+
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
@@ -22,7 +23,7 @@ using Server.Services;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-
+ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
@@ -37,6 +38,11 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 });
+// builder.Services.AddLogging(opt =>
+// {
+//     opt.AddConsole();
+//     opt.AddDebug();
+// });
 // builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -91,13 +97,17 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
+
+
+        ////For Development onlyyyyyyyy===>>>>>> RequireExpirationTime=false
+        RequireExpirationTime = false,
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+        ValidateIssuerSigningKey = false,
         ValidIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>(),
         ValidAudience = builder.Configuration.GetSection("Jwt:Audience").Get<string>(),
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Jwt:key").Get<string>()))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:key"]))
     };
 });
 
@@ -110,7 +120,22 @@ builder.Services.AddScoped(typeof(IGlobalService<Employee>), typeof(EmployeeRepo
 builder.Services.AddScoped<IActivityService, ActivityRepository>();
 builder.Services.AddScoped<IReactsService, ReactsRepository>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<TokenValidationParameters>();
 builder.Services.AddScoped<JwtService>();
+
+//Memoery Caching
+builder.Services.AddMemoryCache();
+
+//Response Caching
+builder.Services.AddResponseCaching();
+
+builder.Services.AddDistributedRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "";
+
+});
+
 
 var app = builder.Build();
 
@@ -126,10 +151,13 @@ app.UseStaticFiles();
 // app.UseRequestCulture();
 // app.UseErrorHandleMiddleware();
 // app.UseLocalizationMiddleware();
+// app.UseMiddleware<RequestTimeMiddlware>();
 
 app.UseRouting();
 app.UseRateLimiter();
 app.UseCors(MyAllowSpecificOrigins);
+
+app.UseResponseCaching();
 
 app.UseAuthentication();
 app.UseAuthorization();

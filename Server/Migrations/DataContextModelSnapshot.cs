@@ -257,6 +257,28 @@ namespace server.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("Server.Models.Driver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CarType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DriverName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LicenseID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Drivers");
+                });
+
             modelBuilder.Entity("Server.Models.EmpActivity", b =>
                 {
                     b.Property<int>("Id")
@@ -301,8 +323,8 @@ namespace server.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("Employee_Name");
 
                     b.Property<double?>("Salary")
@@ -399,6 +421,42 @@ namespace server.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Reacts");
+                });
+
+            modelBuilder.Entity("Server.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JwtId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -510,6 +568,15 @@ namespace server.Migrations
                     b.HasOne("Server.Models.AppUser", "AppUser")
                         .WithMany("Reacts")
                         .HasForeignKey("AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Server.Models.RefreshToken", b =>
+                {
+                    b.HasOne("Server.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("AppUser");
                 });

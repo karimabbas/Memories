@@ -14,14 +14,17 @@ namespace Server.Controllers
 {
     [ApiController]
     // [Route("api/[controller]")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None, Duration = 0)]
     public class DepartmentController : ControllerBase
     {
         private readonly DataContext _dataContext;
+        private readonly ILogger<EmployeeController> _logger;
         private readonly IDepartmentService _departmentService;
-        public DepartmentController(DataContext dataContext, IDepartmentService departmentService)
+        public DepartmentController(DataContext dataContext, ILogger<EmployeeController> logger, IDepartmentService departmentService)
         {
             _dataContext = dataContext;
             _departmentService = departmentService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -31,12 +34,12 @@ namespace Server.Controllers
             if (departmentDto == null)
                 return BadRequest();
 
-            var dept = _departmentService.Get_All_Dept().Where(x => x.Dept_name == departmentDto.Dept_name).FirstOrDefault();
-            if (dept != null)
-            {
-                ModelState.AddModelError("", "Dept is already exists");
-                return StatusCode(422, ModelState);
-            }
+            // var dept = _departmentService.Get_All_Dept().Where(x => x.Dept_name == departmentDto.Dept_name).FirstOrDefault();
+            // if (dept != null)
+            // {
+            //     ModelState.AddModelError("", "Dept is already exists");
+            //     return StatusCode(422, ModelState);
+            // }
 
             if (!ModelState.IsValid)
             {
@@ -63,8 +66,8 @@ namespace Server.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet("department/all")]
+        // [Authorize]
+        [HttpGet("department")]
         public IActionResult AllDepts()
         {
             try
@@ -75,6 +78,7 @@ namespace Server.Controllers
                     return Ok(result);
 
                 }
+                _logger.LogError("You not authorize to this action");
                 return BadRequest(new { message = "Server Error in Get all Depts]" });
 
             }

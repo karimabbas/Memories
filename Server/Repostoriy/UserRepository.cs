@@ -29,5 +29,7 @@ namespace Server.Repostoriy
         {
             return _dataContext.Users.ToList();
         }
+
+      
     }
 }

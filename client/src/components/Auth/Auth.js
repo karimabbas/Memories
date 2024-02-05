@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import styles from "./styles"
-import { Avatar, Button, Container, Grid, Paper } from '@mui/material';
+import { Avatar, Button,Grid, Paper } from '@mui/material';
 import stylesColor from "../Navbar/styles";
 import { useDispatch, useSelector } from 'react-redux';
 import { signup, signin } from '../../actions/auth';
-import authStore from '../../reducers/authStore';
 import { useNavigate } from 'react-router-dom';
 import CustomInput from './CustomInput';
 

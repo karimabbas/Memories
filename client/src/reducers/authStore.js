@@ -5,6 +5,7 @@ const authStore = (state = { authData: null }, action) => {
             if (action?.data.id != null) {
                 localStorage.setItem('UserProfile', JSON.stringify({ ...action?.data }))
                 localStorage.setItem('UserToken', action?.token)
+                localStorage.setItem('RefreshToken', action?.refreshToken) 
             }
             return { ...state, authData: action?.data }
         case "LOGOUT":

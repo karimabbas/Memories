@@ -146,6 +146,9 @@ export const AllActivities = () => API.get('/Activity/all');
 ///Employee Api
 export const CreateEmp = (newEmp) => API.post('/Employee/Create', newEmp);
 export const AllEmps = () => API.get('/Employee/All');
+export const deleteEmployee = (id) => API.delete(`/Employee/Delete/${id}`);
+export const GetEmployee = (id) => API.get(`/Employee/GetEmployee/${id}`);
+export const UpdateEmployee = (id, EditEmp) => API.put(`/Employee/UpdateEmployee/${id}`, EditEmp);
 
 
 

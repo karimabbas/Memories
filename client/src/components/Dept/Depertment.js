@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Paper, Stack, TextField, Button, Typography, Grid, CircularProgress } from '@mui/material'
+import { Paper, Stack, TextField, Button, Grid, CircularProgress } from '@mui/material'
 import styles from "../Form/styles";
-import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createDept, getAllDepts } from '../../actions/Dept';
-import { Card } from 'reactstrap';
 import SingleDept from './SingleDept';
 
 const Depertment = () => {
@@ -54,6 +52,8 @@ const Depertment = () => {
     return (
         <>
             {user ?
+
+
                 <Paper className={classes.Paper} >
 
                     <form onSubmit={handleSubmit}>
@@ -88,7 +88,7 @@ const Depertment = () => {
 
 
                     </form>
-                 
+
                 </Paper>
                 : <p>You are not authorized..No Data To show</p>}
 
