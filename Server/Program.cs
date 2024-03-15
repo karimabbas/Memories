@@ -98,7 +98,6 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
 
-
         ////For Development onlyyyyyyyy===>>>>>> RequireExpirationTime=false
         RequireExpirationTime = false,
         ValidateIssuer = true,
@@ -112,11 +111,15 @@ builder.Services.AddAuthentication(options =>
 });
 
 // builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<INumberService,FirstNumberRepo>();
+builder.Services.AddScoped<INumberService,SecondNumberRepo>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IPostService, PostRepository>();
 builder.Services.AddScoped<IUserService, UserRepository>();
 builder.Services.AddScoped<IDepartmentService, DepartmentRepository>();
 builder.Services.AddScoped(typeof(IGlobalService<Employee>), typeof(EmployeeRepository));
+builder.Services.AddScoped(typeof(IGlobalService<Blog>), typeof(BlogRepository));
 builder.Services.AddScoped<IActivityService, ActivityRepository>();
 builder.Services.AddScoped<IReactsService, ReactsRepository>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

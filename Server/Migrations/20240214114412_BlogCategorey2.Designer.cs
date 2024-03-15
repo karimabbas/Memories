@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Data;
 
@@ -11,9 +12,11 @@ using Server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240214114412_BlogCategorey2")]
+    partial class BlogCategorey2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,29 +255,6 @@ namespace server.Migrations
                     b.ToTable("Blogs");
                 });
 
-            modelBuilder.Entity("Server.Models.CateDesigner", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("Category_id")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Desginer_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Category_id");
-
-                    b.HasIndex("Desginer_id");
-
-                    b.ToTable("CateDesigners");
-                });
-
             modelBuilder.Entity("Server.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -321,22 +301,6 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("Server.Models.Desginer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Desginers");
                 });
 
             modelBuilder.Entity("Server.Models.Driver", b =>
@@ -592,22 +556,6 @@ namespace server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Server.Models.CateDesigner", b =>
-                {
-                    b.HasOne("Server.Models.Category", "Categories")
-                        .WithMany("CateDesigners")
-                        .HasForeignKey("Category_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Server.Models.Desginer", "Desginers")
-                        .WithMany("CateDesigners")
-                        .HasForeignKey("Desginer_id");
-
-                    b.Navigation("Categories");
-
-                    b.Navigation("Desginers");
-                });
-
             modelBuilder.Entity("Server.Models.Category", b =>
                 {
                     b.HasOne("Server.Models.Blog", "Blog")
@@ -706,19 +654,9 @@ namespace server.Migrations
                     b.Navigation("Categories");
                 });
 
-            modelBuilder.Entity("Server.Models.Category", b =>
-                {
-                    b.Navigation("CateDesigners");
-                });
-
             modelBuilder.Entity("Server.Models.Department", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("Server.Models.Desginer", b =>
-                {
-                    b.Navigation("CateDesigners");
                 });
 
             modelBuilder.Entity("Server.Models.Employee", b =>

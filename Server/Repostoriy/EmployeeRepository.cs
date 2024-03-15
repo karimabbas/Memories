@@ -10,6 +10,7 @@ using Server.Dto;
 using Server.Models;
 using Server.Services;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Repostoriy
 {
@@ -42,9 +43,9 @@ namespace Server.Repostoriy
 
         }
 
-        public async Task<IEnumerable<Employee>> GetAll()
+        public async Task<List<Employee>> GetAll()
         {
-            var data = _memoryCache.Get<IEnumerable<Employee>>("allemps");
+            var data = _memoryCache.Get<List<Employee>>("allemps");
             if (data is not null)
             {
                 return data;
@@ -81,6 +82,12 @@ namespace Server.Repostoriy
             // return _dataContext.Employees.FromSqlRaw("EXECUTE spEmpWithACtivity {0}", EmpID).AsEnumerable().First();
         }
 
+        public async Task<List<Employee>> GetEmpByDeptId(int id)
+        {
+            var dept = await _dataContext.Departments.FindAsync(id);
+            return await _dataContext.Employees.AsNoTracking().Where(x => x.Department.Id == id).ToListAsync();
+        }
+
         public Employee Upadate(int id, EmployeeDto t)
         {
             var Emp = GetById(id);
@@ -99,7 +106,5 @@ namespace Server.Repostoriy
             return Emp;
 
         }
-
-
     }
 }

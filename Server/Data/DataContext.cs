@@ -23,6 +23,10 @@ namespace Server.Data
         //                    where e.State == EntityState.Modified || e.State == EntityState.Added
         //                    select e.Entity;
 
+        //     var Entities1 = from e in ChangeTracker.Entries()
+        //                     where e.State == EntityState.Deleted
+        //                     select e.Entity;
+
         //     foreach (var Entity in Entities)
         //     {
         //         ValidationContext validationContext = new(Entity);
@@ -74,6 +78,14 @@ namespace Server.Data
 
             // builder.Entity<Post>().HasQueryFilter(p=>p.Loves > 4);
 
+            builder.Entity<Department>().HasQueryFilter(d => d.IsDeleted == false);
+
+            // builder.Entity<Blog>().HasMany(p => p.Posts).WithOne(b => b.Blog).OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Blog>().HasMany(p => p.Categories).WithOne(b => b.Blog).OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<CateDesigner>().HasOne(p => p.Categories).WithMany(pr => pr.CateDesigners).OnDelete(DeleteBehavior.Cascade);
+            // builder.Entity<CateDesigner>().HasOne(p => p.Reacts).WithMany(pr => pr.PostReacts).OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(builder);
         }
 
@@ -85,7 +97,11 @@ namespace Server.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Activity> Activity { get; set; }
         public DbSet<EmpActivity> EmpActivities { get; set; }
-        public DbSet<RefreshToken> RefreshTokens {get;set;}
-        public DbSet<Driver> Drivers {get;set;}
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Desginer> Desginers { get; set; }
+        public DbSet<CateDesigner> CateDesigners { get; set; }
     }
 }

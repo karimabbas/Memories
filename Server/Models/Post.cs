@@ -24,7 +24,8 @@ namespace Server.Models
         public AppUser? AppUser { get; set; }
         public int Likes { get; set; }
         public int Loves { get; set; }
-        public ICollection<PostReacts>? PostReacts {get;set;}
-
+        public ICollection<PostReacts>? PostReacts { get; set; }
+        // [ForeignKey("BlogId")]
+        // public Blog? Blog { get; set; }
     }
 }

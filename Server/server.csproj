@@ -23,5 +23,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="7.0.11"/>
     <PackageReference Include="JwtSecurityTokenCustom" Version="1.0.0.2"/>
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.2"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="7.3.8"/>
   </ItemGroup>
 </Project>

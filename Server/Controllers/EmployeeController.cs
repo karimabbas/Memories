@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.Dto;
+using Server.Helpers;
 using Server.Models;
 using Server.Services;
 
@@ -141,5 +142,50 @@ namespace Server.Controllers
             return NotFound("Faild to Delete");
         }
 
+        [HttpGet("GetEmployeesWithDeptId")]
+        public async Task<IActionResult> GetEmployeesWithDeptId([FromQuery] int id)
+        {
+            try
+            {
+                var allemps = await _globalServiceEmp.GetEmpByDeptId(id);
+                if (allemps.Count > 0)
+                {
+                    return Ok(allemps);
+                }
+                return Ok(new { message = "there's no Employees in this department" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+
+            }
+        }
+
+        [HttpGet("GetWithPagnition")]
+        public async Task<IActionResult> GetWithPagnition([FromQuery] int page = 1, [FromQuery] int pagSize = 2, [FromQuery] string filter = "")
+        {
+
+            var Query = await _globalServiceEmp.GetAll();
+            // Query.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                Query = Query.Where(e => e.Name.Contains(filter)).ToList();
+            }
+            var totalCount = Query.Count;
+
+            var totalPages = (int)Math.Ceiling((double)totalCount / pagSize);
+            Query = Query.Skip((page - 1) * pagSize).Take(pagSize).ToList();
+
+            var result = new PagenitionResponse
+            {
+                TotlaCount = totalCount,
+                TotlaPage = totalPages,
+                CurrentPage = page,
+                PageSize = pagSize,
+                Employees = Query
+            };
+            return Ok(result);
+        }
     }
 }

@@ -98,7 +98,8 @@ namespace server.Migrations
                 table: "PostReacts",
                 column: "ReactsId",
                 principalTable: "Reacts",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />

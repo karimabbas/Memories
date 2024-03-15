@@ -10,6 +10,7 @@ namespace Server.Services
     {
         Task<List<Department>> Get_All_Dept();
         bool CreateDepartment(Department department);
+        Task<bool> DeleteDepatmet(int id);
 
     }
 }

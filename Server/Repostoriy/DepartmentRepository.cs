@@ -14,33 +14,32 @@ namespace Server.Repostoriy
     public class DepartmentRepository : IDepartmentService
     {
         private readonly DataContext _dataContext;
-        private readonly IDistributedCache _distributedCache;
-        public DepartmentRepository(DataContext dataContext, IDistributedCache distributedCache)
+        public DepartmentRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
-            _distributedCache = distributedCache;
-
         }
         public bool CreateDepartment(Department department)
         {
             _dataContext.Add(department);
             return Save();
         }
+
+        public async Task<bool> DeleteDepatmet(int id)
+        {
+            var dept = await _dataContext.Departments.Where(x => x.Id == id).SingleAsync();
+            if (dept is not null)
+            {
+                dept.IsDeleted = true;
+                dept.DeletedAt = DateTimeOffset.UtcNow;
+                _dataContext.Update(dept);
+                return await _dataContext.SaveChangesAsync() > 0;
+            }
+            return false;
+        }
+
         public async Task<List<Department>> Get_All_Dept()
         {
-            var cachedData = await _distributedCache.GetStringAsync("allDepts");
-            if (cachedData is not null)
-            {
-                return JsonConvert.DeserializeObject<List<Department>>(cachedData);
-            }
-
-            var expirationTime = TimeSpan.FromMinutes(5.0);
-            var allDepartments = await _dataContext.Departments.ToListAsync();
-            cachedData = JsonConvert.SerializeObject(allDepartments);
-            var cacheOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(expirationTime);
-            await _distributedCache.SetStringAsync("allDepts", cachedData, cacheOptions);
-            
-            return allDepartments;
+            return await _dataContext.Departments.AsNoTracking().ToListAsync();
         }
 
         public bool Save()

@@ -14,6 +14,8 @@ namespace Server.Models
         [DisplayFormat(DataFormatString = "{yyyy-MM-dd}")]
         public DateTime YearOfCreation { get; set; }
         public ICollection<Employee>? Employees { get; set; }
-
+        public bool IsDeleted { get; set; } = false;
+        public DateTimeOffset? DeletedAt { get; set; } = null;
+        
     }
 }

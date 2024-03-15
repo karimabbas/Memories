@@ -11,13 +11,14 @@ namespace Server.Services
 {
     public interface IGlobalService<T>
     {
-        Task<IEnumerable<T>> GetAll();
+        Task<List<T>> GetAll();
         IEnumerable<T> GetAllExceptName();
         IQueryable<T> GetAllExceptId();
         bool Create(int id,T t);
         T GetById(int id);
         bool DELETE(int id);
         T Upadate(int id,EmployeeDto t);
+        Task<List<T>> GetEmpByDeptId(int id);
 
     }
 }

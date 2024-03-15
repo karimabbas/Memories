@@ -68,19 +68,37 @@ namespace Server.Controllers
 
         // [Authorize]
         [HttpGet("department")]
-        public IActionResult AllDepts()
+        public async Task<IActionResult> AllDepts()
         {
             try
             {
-                var result = _departmentService.Get_All_Dept();
+                var result = await _departmentService.Get_All_Dept();
                 if (result != null)
                 {
                     return Ok(result);
-
                 }
                 _logger.LogError("You not authorize to this action");
                 return BadRequest(new { message = "Server Error in Get all Depts]" });
 
+            }
+            catch (System.Exception ex)
+            {
+                return Ok(new { message = ex.Message });
+
+            }
+        }
+
+        [HttpDelete("Department{DeptId}")]
+        public async Task<IActionResult> DeleteDepartment([FromRoute] int DeptId)
+        {
+            try
+            {
+                var result = await _departmentService.DeleteDepatmet(DeptId);
+                if (result)
+                {
+                    return Ok("Depatment Deleted Successfully");
+                }
+                return NotFound("Faild to Delete department");
             }
             catch (System.Exception ex)
             {
